@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  nu-authorizer.dev:
+    container_name: nu-authorizer
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      FILE_PATH: ${FILE_PATH}
