@@ -21,7 +21,7 @@ expansive software.
 - [Git & Bash](https://git-scm.com/downloads)
 - [Maven 3.8.1](https://maven.apache.org/download.cgi)
 - [Java 11](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
-- [Kotlin 1.5.10](https://kotlinlang.org/)
+- [Kotlin 1.5.21](https://kotlinlang.org/)
 - [Docker 20.10.7](https://www.docker.com/products/docker-desktop) 
 - [Docker Compose 1.29.2](https://docs.docker.com/compose/install/)
 
