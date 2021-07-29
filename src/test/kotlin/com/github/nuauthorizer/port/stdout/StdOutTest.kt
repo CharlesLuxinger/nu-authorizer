@@ -33,7 +33,7 @@ internal class StdOutTest {
         StdOut(CustomObjectMapper).execute(Account())
 
         assertEquals(
-            "{\"active-card\":false,\"available-limit\":0,\"violations\":[]}",
+            "{\"active-card\":false,\"available-limit\":0,\"allow-listed\":false,\"violations\":[]}",
             outputStreamCaptor.toString().trim()
         )
     }

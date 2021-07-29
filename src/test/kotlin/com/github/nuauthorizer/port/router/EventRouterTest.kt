@@ -1,10 +1,15 @@
 package com.github.nuauthorizer.port.router
 
-import com.github.nuauthorizer.domain.account.Account
 import com.github.nuauthorizer.domain.account.Transaction
 import com.github.nuauthorizer.domain.common.Entity
+import com.github.nuauthorizer.port.stdin.AccountStdIn
+import com.github.nuauthorizer.port.stdin.AllowListStdIn
+import com.github.nuauthorizer.port.stdin.EventIn
+import com.github.nuauthorizer.port.stdin.TransactionStdIn
 import com.github.nuauthorizer.usecase.AddTransactionInAccount
 import com.github.nuauthorizer.usecase.CreateAccount
+import com.github.nuauthorizer.usecase.SetAllowListInAccount
+import com.github.nuauthorizer.usecase.SetAllowListInAccountImpl
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -26,17 +31,24 @@ internal class EventRouterTest {
     @Mock
     private lateinit var addTransactionInAccount: AddTransactionInAccount
 
+    @Mock
+    private lateinit var setAllowListInAccount: SetAllowListInAccount
+
     @InjectMocks
     private lateinit var eventRouter: EventRouter
+
+    private val accountStdIn = AccountStdIn(activeCard = false, 0L)
+    private val accountActual = accountStdIn.toDomain()
+
+    private val transactionStdIn = TransactionStdIn("test", 1L, now())
+    private val transactionActual = transactionStdIn.toDomain()
 
     @Test
     @DisplayName("When is an Account Event should execute Create Account")
     fun whenIsAnAccountShouldExecuteCreateAccount() {
-        val accountActual = Account()
-
         whenever(createAccount.execute(accountActual)).thenReturn(accountActual)
 
-        val accountExpected = eventRouter.execute(accountActual)
+        val accountExpected = eventRouter.execute(accountStdIn)
 
         assertEquals(accountExpected, accountActual)
     }
@@ -44,14 +56,23 @@ internal class EventRouterTest {
     @Test
     @DisplayName("When is a Transaction Event should execute Add Transaction In Account")
     fun whenIsATransactionShouldExecuteAddTransactionInAccount() {
-        val transactionActual = Transaction("test", 1L, now())
-        val accountActual = Account()
-
         whenever(addTransactionInAccount.execute(transactionActual)).thenReturn(accountActual)
 
-        val accountExpected = eventRouter.execute(transactionActual)
+        val accountExpected = eventRouter.execute(transactionStdIn)
 
         assertEquals(accountExpected, accountActual)
+    }
+
+    @Test
+    @DisplayName("When is an Allow List Event should execute Set Allow List In Account")
+    fun whenIsAnAllowListEventShouldExecuteSetAllowListInAccount() {
+        val active = true
+        val accountUpdated = accountActual.copy(allowListed = active)
+        whenever(setAllowListInAccount.execute(active)).thenReturn(accountUpdated)
+
+        val accountExpected = eventRouter.execute(AllowListStdIn(active))
+
+        assertEquals(accountExpected, accountUpdated)
     }
 
     @Test
@@ -62,5 +83,5 @@ internal class EventRouterTest {
         }
     }
 
-    private class NotImplementClass : Entity
+    private class NotImplementClass : EventIn()
 }

@@ -7,13 +7,15 @@ import com.github.nuauthorizer.port.stdin.StdIn
 import com.github.nuauthorizer.port.stdout.StdOut
 import com.github.nuauthorizer.usecase.AddTransactionInAccountImpl
 import com.github.nuauthorizer.usecase.CreateAccountImpl
+import com.github.nuauthorizer.usecase.SetAllowListInAccountImpl
 
 fun main(args: Array<String>) {
-    args.flatMap { line -> StdIn(CustomObjectMapper).execute(line).map { it.toDomain() } }
+    args.flatMap { line -> StdIn(CustomObjectMapper).execute(line) }
         .map {
             EventRouter(
                 CreateAccountImpl(AccountRepositoryImpl()),
-                AddTransactionInAccountImpl(AccountRepositoryImpl())
+                AddTransactionInAccountImpl(AccountRepositoryImpl()),
+                SetAllowListInAccountImpl(AccountRepositoryImpl())
             ).execute(it)
         }
         .map { StdOut(CustomObjectMapper).execute(it) }

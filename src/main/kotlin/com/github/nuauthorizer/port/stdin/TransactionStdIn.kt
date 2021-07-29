@@ -10,5 +10,5 @@ data class TransactionStdIn(
     val amount: Long,
     val time: OffsetDateTime,
 ) : EventIn() {
-    override fun toDomain() = Transaction(this.merchant, this.amount, this.time)
+    fun toDomain() = Transaction(this.merchant, this.amount, this.time)
 }

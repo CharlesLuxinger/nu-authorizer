@@ -51,6 +51,19 @@ internal class AccountTest {
     }
 
     @Test
+    @DisplayName("When exists 3 transactions in 2 minutes and allow listed is true should not return HIGH_FREQUENCY_SMALL_INTERVAL violations")
+    fun whenExists3TransactionsIn2MinutesAndAllowListedIsTrueShouldNotReturnHighFrequencySmallIntervalViolations() {
+        val transaction1 = Transaction("test1", 1L, now())
+        val transaction2 = Transaction("test2", 1L, now().plusSeconds(15))
+        val transaction3 = Transaction("test3", 1L, now().plusSeconds(30))
+        val accountActual = Account(true, 5L, true, transactions = listOf(transaction1, transaction2, transaction3))
+
+        val accountExpected = accountActual.setTransaction(Transaction("test4", 1L, now().plusMinutes(1)))
+
+        assertTrue { accountExpected.violations.isEmpty() }
+    }
+
+    @Test
     @DisplayName("When exists 2 transactions with same merchant and amount in 2 minutes should return DOUBLE_TRANSACTION violations")
     fun whenExists2TransactionsWithSameMerchantAndAmountIn2MinutesReturnDoubleTransactionViolations() {
         val transaction1 = Transaction("test", 1L, now())
@@ -60,6 +73,18 @@ internal class AccountTest {
         val accountExpected = accountActual.setTransaction(Transaction("test", 1L, now().plusMinutes(1)))
 
         assertEquals(accountExpected.violations.first(), DOUBLE_TRANSACTION)
+    }
+
+    @Test
+    @DisplayName("When exists 2 transactions with same merchant and amount in 2 minutes and allow listed is true should not return DOUBLE_TRANSACTION violations")
+    fun whenExists2TransactionsWithSameMerchantAndAmountIn2MinutesAndAllowListedIsTrueShouldNotReturnDoubleTransactionViolations() {
+        val transaction1 = Transaction("test", 1L, now())
+        val transaction2 = Transaction("test", 1L, now().plusSeconds(15))
+        val accountActual = Account(true, 5L, true, transactions = listOf(transaction1, transaction2))
+
+        val accountExpected = accountActual.setTransaction(Transaction("test", 1L, now().plusMinutes(1)))
+
+        assertTrue { accountExpected.violations.isEmpty() }
     }
 
     @Test

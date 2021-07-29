@@ -11,5 +11,5 @@ data class AccountStdIn(
     val activeCard: Boolean,
     val availableLimit: Long,
 ) : EventIn() {
-    override fun toDomain() = Account(this.activeCard, this.availableLimit)
+    fun toDomain() = Account(activeCard = this.activeCard, availableLimit = this.availableLimit)
 }

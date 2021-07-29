@@ -28,6 +28,14 @@ internal class StdInTest {
     }
 
     @Test
+    @DisplayName("With a Valid Path File Should Return AllowListStdIn Instance")
+    fun withAValidPathFileShouldReturnAllowListStdInInstance() {
+        stdIn.execute("src/test/resources/allow-list")
+            .first()
+            .let { assertTrue(it is AllowListStdIn) }
+    }
+
+    @Test
     @DisplayName("With an Invalid Valid Path File Should Throw Exception")
     fun withAnInvalidValidPathFileShouldThrowException() {
         assertThrows(FileNotFoundException::class.java) { stdIn.execute("wrongPath") }

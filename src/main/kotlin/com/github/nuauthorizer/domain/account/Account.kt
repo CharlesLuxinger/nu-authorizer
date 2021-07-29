@@ -7,6 +7,7 @@ import java.time.OffsetDateTime
 data class Account(
     val activeCard: Boolean = false,
     val availableLimit: Long = 0L,
+    val allowListed: Boolean = false,
     val transactions: List<Transaction> = emptyList(),
     val violations: List<AccountViolation> = emptyList()
 ) : Entity {
@@ -31,15 +32,17 @@ data class Account(
 
     private fun isHighFrequencySmallInterval(time: OffsetDateTime) =
         this.transactions
-            .takeLast(3)
-            .filter { it.time.isAfter(time.minusMinutes(2)) }
-            .takeIf { it.size > 2 }
+            .takeUnless { this.allowListed }
+            ?.takeLast(3)
+            ?.filter { it.time.isAfter(time.minusMinutes(2)) }
+            ?.takeIf { it.size > 2 }
             ?.let { this.copy(violations = this.violations + HIGH_FREQUENCY_SMALL_INTERVAL) }
             ?: this
 
     private fun isDoubleTransaction(transaction: Transaction) =
         this.transactions
-            .find { it.isDoubleTransaction(transaction) }
+            .takeUnless { this.allowListed }
+            ?.find { it.isDoubleTransaction(transaction) }
             ?.let { this.copy(violations = this.violations + DOUBLE_TRANSACTION) }
             ?: this
 

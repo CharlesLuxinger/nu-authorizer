@@ -9,9 +9,11 @@ import com.github.nuauthorizer.domain.account.AccountViolation
 data class AccountStdOut(
     val activeCard: Boolean,
     val availableLimit: Long,
+    val allowListed: Boolean,
     val violations: List<AccountViolation> = emptyList()
 ) {
     companion object {
-        fun of(account: Account) = AccountStdOut(account.activeCard, account.availableLimit, account.violations)
+        fun of(account: Account) =
+            AccountStdOut(account.activeCard, account.availableLimit, account.allowListed, account.violations)
     }
 }
